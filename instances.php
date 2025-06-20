@@ -86,7 +86,7 @@ try {
         // Detailed status for IP
         $detail = pve_request(
             'GET',
-            "https://10.42.0.17:8006/api2/json/nodes/k-tronics/lxc/$vmid/config",
+            "$BASE/nodes/$PVE_NODE/lxc/$vmid/interfaces",
             //"$BASE/nodes/$PVE_NODE/lxc/$vmid/status/current",
             [$ticketHdr],
             null,
@@ -96,11 +96,13 @@ try {
 
         $ips = [];
         if (isset($detail)) {
-            echo $detail['data'];
+            //echo $detail;
             foreach ($detail as $iface) {
+                
                 foreach ($iface['ip-addresses']??[] as $ipObj) {
                     if (filter_var($ipObj['ip-address'], FILTER_VALIDATE_IP))
                         $ips[] = $ipObj['ip-address'];
+                    echo $ips[2];
                 }
             }
         }
@@ -117,8 +119,8 @@ try {
                                     round(($detail['mem'] ?? $ct['maxmem'] ?? 512*1024*1024)/1048576)
                                    ),
             'zone'       => $PVE_NODE,
-            'public_ip'  => $ips[0] ?? '—',
-            'private_ip' => $ips[1] ?? $ips[0] ?? '—',
+            'public_ip'  => $ips[2] ?? '—',
+            'private_ip' => $ips[0] ?? $ips[0] ?? '—',
         ];
     }
 
